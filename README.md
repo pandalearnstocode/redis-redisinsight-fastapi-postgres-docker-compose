@@ -10,7 +10,7 @@ docker-compose down
 * [Swagger UI](http://localhost:8008/docs)
 * [Redis Insight](http://localhost:8001)
 
-
+![](https://github.com/pandalearnstocode/redis-redisinsight-fastapi-postgres-docker-compose/redis_cache.gif)
 
 ### __reference:__
 
