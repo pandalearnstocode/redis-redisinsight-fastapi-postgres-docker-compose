@@ -1,3 +1,15 @@
+### __Running things in Local:__
+
+```bash
+sudo docker-compose build
+docker-compose up -d
+docker ps
+docker-compose down
+```
+
+* [Swagger UI](http://localhost:8008/docs)
+* [Redis Insight](http://localhost:8001)
+
 
 
 ### __reference:__
