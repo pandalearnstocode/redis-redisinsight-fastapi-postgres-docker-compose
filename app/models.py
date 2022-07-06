@@ -21,3 +21,15 @@ class OptimizationResult(SQLModel, table=True):
 
     class Config:
         arbitrary_types_allowed = True
+
+class FXRateCreate(SQLModel):
+    year: int = Field(index = True)
+    country: str = Field(index = True)
+    fx_rate: float
+
+class FXRate(FXRateCreate, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+
+class FXRateRead(FXRateCreate):
+    id: int
+

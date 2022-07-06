@@ -8,7 +8,7 @@ from sqlalchemy import select
 from sqlmodel import Session
 import joblib
 from app.db import init_db, get_session
-from app.models import  OptimizationRun, OptimizationResult
+from app.models import  OptimizationRun, OptimizationResult, FXRate, FXRateRead, FXRateCreate
 from app.optimization import _optimization_result
 import uuid
 
@@ -98,3 +98,19 @@ async def pong():
 def run_optimization(optimization_run: OptimizationRun, session: Session = Depends(get_session)) -> dict:
     optimization_result_response =  get_optimization_result(optimization_run.dict(), session=session)
     return optimization_result_response
+
+
+@app.get("/fx_rate/{country}/{year}")
+def get_fx_rate(country: str, year: int, session: Session = Depends(get_session)):
+    statement = select(FXRate).where(FXRate.country == country).where(FXRate.year == year)
+    results = session.exec(statement)
+    data = results.first()
+    return data["FXRate"]
+
+@app.post("/fx_rate/", response_model=FXRateRead)
+def create_team(*, session: Session = Depends(get_session), fx_rate: FXRateCreate):
+    db_fx_rate = FXRate.from_orm(fx_rate)
+    session.add(db_fx_rate)
+    session.commit()
+    session.refresh(db_fx_rate)
+    return db_fx_rate
