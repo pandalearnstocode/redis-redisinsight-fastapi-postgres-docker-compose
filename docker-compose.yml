@@ -1,0 +1,48 @@
+version: "3.2"
+services:
+  redis:
+    container_name: redis-cont
+    image: "redis:alpine"
+    environment:
+      - REDIS_PASSWORD=ubuntu
+      - REDIS_REPLICATION_MODE=master
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis-data:/data
+    command:
+      - "--requirepass ubuntu"
+  redisinsight:
+    container_name: redisinsight-cont
+    image: redislabs/redisinsight
+    ports:
+      - 8001:8001
+    volumes:
+      - redisinsight:/db
+  web:
+    build: .
+    command: uvicorn app.main:app --host 0.0.0.0
+    volumes:
+      - .:/app
+    ports:
+      - 8008:8000
+    environment:
+      - DATABASE_URL=postgresql://fastapi_traefik:fastapi_traefik@db:5432/fastapi_traefik
+    depends_on:
+      - db
+      - redisinsight
+      - redis
+  db:
+    image: postgres:13-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    expose:
+      - 5432
+    environment:
+      - POSTGRES_USER=fastapi_traefik
+      - POSTGRES_PASSWORD=fastapi_traefik
+      - POSTGRES_DB=fastapi_traefik
+volumes:
+  redis-data:
+  redisinsight:
+  postgres_data:
